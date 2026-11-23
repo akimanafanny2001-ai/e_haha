@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Cart — e_haha{% endblock %}
+{% block content %}
+<div class="container cart-layout">
+  <section>
+    <h1 style="font-size:30px;font-weight:800;margin-bottom:24px">Your cart</h1>
+    {% if items %}
+      <div class="cart-list">
+        {% for it in items %}
+          <div class="cart-row">
+            {% if it.product.image %}
+              <img src="{{ it.product.image.url }}" alt="">
+            {% else %}
+              <div class="ph">🥗</div>
+            {% endif %}
+            <div>
+              <a href="{{ it.product.get_absolute_url }}" style="font-weight:700">{{ it.product.name }}</a>
+              <div style="color:var(--muted);font-size:13px">${{ it.product.price }} / {{ it.product.unit }}</div>
+            </div>
+            <form method="post" action="{% url 'shop:update_cart' it.product.id %}">
+              {% csrf_token %}
+              <div class="qty">
+                <button type="submit" name="quantity" value="{{ it.qty|add:'-1' }}">−</button>
+                <input type="number" name="quantity" value="{{ it.qty }}" min="1" max="{{ it.product.stock }}">
+                <button type="submit" name="quantity" value="{{ it.qty|add:'1' }}">+</button>
+              </div>
+            </form>
+            <div style="font-weight:700">${{ it.subtotal }}</div>
+            <form method="post" action="{% url 'shop:remove_from_cart' it.product.id %}">
+              {% csrf_token %}
+              <button type="submit" class="remove" title="Remove" aria-label="Remove {{ it.product.name }}">✕</button>
+            </form>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty">
+        <h3>Your cart is empty</h3>
+        <p>Start adding fresh food to your cart.</p>
+        <a href="{% url 'shop:product_list' %}" class="btn btn-primary" style="margin-top:16px">Shop now</a>
+      </div>
+    {% endif %}
+  </section>
+
+  {% if items %}
+  <aside class="summary">
+    <h3>Order summary</h3>
+    <div class="summary-row"><span>Subtotal</span><span>${{ total }}</span></div>
+    <div class="summary-row"><span>Delivery</span><span>Free</span></div>
+    <div class="summary-total"><span>Total</span><span>${{ total }}</span></div>
+    <a href="{% url 'shop:checkout' %}" class="btn btn-primary">Proceed to checkout →</a>
+    <a href="{% url 'shop:product_list' %}" class="btn btn-outline" style="margin-top:10px">Continue shopping</a>
+  </aside>
+  {% endif %}
+</div>
+{% endblock %}

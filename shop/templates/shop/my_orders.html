@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}My orders — e_haha{% endblock %}
+{% block content %}
+<div class="container" style="padding:48px 20px;max-width:800px">
+  <h1 style="font-size:30px;font-weight:800;margin-bottom:24px">My orders</h1>
+  {% for o in orders %}
+    <div class="order-card">
+      <div class="order-head">
+        <div>
+          <b>Order #{{ o.id }}</b>
+          <div style="color:var(--muted);font-size:13px">{{ o.created_at|date:"M d, Y • H:i" }}</div>
+        </div>
+        <span class="status status-{{ o.status }}">{{ o.status }}</span>
+      </div>
+      <div style="color:var(--muted);font-size:14px;margin-bottom:12px">{{ o.items.count }} item{{ o.items.count|pluralize }} • ${{ o.total_price }}</div>
+      <a href="{% url 'shop:order_detail' o.id %}" class="btn btn-outline" style="padding:8px 16px">View details</a>
+    </div>
+  {% empty %}
+    <div class="empty"><h3>No orders yet</h3><p>Place your first order today.</p></div>
+  {% endfor %}
+</div>
+{% endblock %}

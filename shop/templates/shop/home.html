@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}e_haha — Fresh food, delivered{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="container hero-inner">
+    <div>
+      <h1>Fresh food, <span>delivered</span> to your door.</h1>
+      <p>Hand-picked fruits, vegetables, and everyday essentials from trusted local farms — order today, enjoy tomorrow.</p>
+      <div class="hero-buttons">
+        <a href="{% url 'shop:product_list' %}" class="btn btn-primary">Shop now →</a>
+        <a href="{% url 'shop:register' %}" class="btn btn-outline">Create account</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div>🍎</div><div>🥦</div>
+      <div>🍞</div><div>🥛</div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div><h2>Shop by category</h2><p>Everything you need in one place.</p></div>
+      <a href="{% url 'shop:product_list' %}" class="link-all">Browse all →</a>
+    </div>
+    <div class="category-grid">
+      {% for c in categories %}
+        <a href="{{ c.get_absolute_url }}" class="category-card">
+          <div class="category-emoji">🥗</div>
+          <h3>{{ c.name }}</h3>
+        </a>
+      {% empty %}
+        <p>No categories yet. Add them in the admin panel.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% if featured_products %}
+<section class="section" style="background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="container">
+    <div class="section-head">
+      <div><h2>Featured picks</h2><p>Loved by our customers.</p></div>
+      <a href="{% url 'shop:product_list' %}" class="link-all">See all →</a>
+    </div>
+    <div class="product-grid">
+      {% for p in featured_products %}
+        {% include 'shop/_product_card.html' with product=p %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div><h2>New arrivals</h2><p>Freshly added to our shop.</p></div>
+    </div>
+    <div class="product-grid">
+      {% for p in latest_products %}
+        {% include 'shop/_product_card.html' with product=p %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

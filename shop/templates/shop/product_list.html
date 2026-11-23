@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Shop — e_haha{% endblock %}
+
+{% block content %}
+<div class="container shop-layout">
+  <aside class="filter-sidebar">
+    <h3>Categories</h3>
+    <a href="{% url 'shop:product_list' %}" class="{% if not active_category %}active{% endif %}">All products</a>
+    {% for c in categories %}
+      <a href="{% url 'shop:product_list' %}?category={{ c.slug }}"
+         class="{% if active_category and active_category.id == c.id %}active{% endif %}">{{ c.name }}</a>
+    {% endfor %}
+  </aside>
+
+  <section>
+    <div class="toolbar">
+      <div>
+        <h2 style="font-size:26px;font-weight:800">
+          {% if active_category %}{{ active_category.name }}{% else %}All products{% endif %}
+        </h2>
+        <p style="color:var(--muted);font-size:14px">{{ products|length }} item{{ products|length|pluralize }}</p>
+      </div>
+      <form method="get">
+        {% if active_category %}<input type="hidden" name="category" value="{{ active_category.slug }}">{% endif %}
+        {% if search %}<input type="hidden" name="q" value="{{ search }}">{% endif %}
+        <select name="sort" onchange="this.form.submit()">
+          <option value="-created_at" {% if sort == '-created_at' %}selected{% endif %}>Newest</option>
+          <option value="price" {% if sort == 'price' %}selected{% endif %}>Price: low → high</option>
+          <option value="-price" {% if sort == '-price' %}selected{% endif %}>Price: high → low</option>
+          <option value="name" {% if sort == 'name' %}selected{% endif %}>Name A → Z</option>
+        </select>
+      </form>
+    </div>
+
+    {% if products %}
+      <div class="product-grid">
+        {% for p in products %}
+          {% include 'shop/_product_card.html' with product=p %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty"><h3>No products found</h3><p>Try another category or search term.</p></div>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

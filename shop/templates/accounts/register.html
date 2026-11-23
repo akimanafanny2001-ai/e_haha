@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Sign up — e_haha{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="form-wrap">
+    <h2>Create your account</h2>
+    <p class="sub">Join e_haha and get fresh food delivered.</p>
+    <form method="post">
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="form-group">
+          <label>{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}<div class="help">{{ field.help_text|safe }}</div>{% endif %}
+          {% if field.errors %}<ul class="errorlist">{% for e in field.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+        </div>
+      {% endfor %}
+      <button class="btn btn-primary">Create account</button>
+    </form>
+    <p class="form-foot">Already registered? <a href="{% url 'shop:login' %}">Log in</a></p>
+  </div>
+</div>
+{% endblock %}

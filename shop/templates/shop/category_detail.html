@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}{{ category.name }} — e_haha{% endblock %}
+{% block content %}
+<div class="container" style="padding:48px 20px">
+  <h1 style="font-size:36px;font-weight:800">{{ category.name }}</h1>
+  <p style="color:var(--muted);margin-bottom:32px">{{ category.description }}</p>
+  <div class="product-grid">
+    {% for p in products %}
+      {% include 'shop/_product_card.html' with product=p %}
+    {% empty %}
+      <p>No products yet in this category.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

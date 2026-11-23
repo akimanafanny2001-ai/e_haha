@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.name }} — e_haha{% endblock %}
+
+{% block content %}
+<div class="container pd">
+  <div class="pd-img">
+    {% if product.image %}<img src="{{ product.image.url }}" alt="{{ product.name }}">{% else %}<div class="ph" style="font-size:120px">🥗</div>{% endif %}
+  </div>
+  <div class="pd-info">
+    <div class="pd-cat">{{ product.category.name }}</div>
+    <h1>{{ product.name }}</h1>
+    <div class="pd-price">${{ product.price }} <small style="font-size:16px;color:var(--muted);font-weight:500">/ {{ product.unit }}</small></div>
+    <p class="pd-desc">{{ product.description }}</p>
+
+    {% if product.stock > 0 %}
+      <form method="post" action="{% url 'shop:add_to_cart' product.id %}">
+        {% csrf_token %}
+        <div class="qty">
+          <button type="button" onclick="this.parentNode.querySelector('input').stepDown()">−</button>
+          <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}">
+          <button type="button" onclick="this.parentNode.querySelector('input').stepUp()">+</button>
+        </div>
+        <button class="btn btn-primary">Add to cart 🛒</button>
+      </form>
+      <p style="font-size:13px;color:var(--muted);margin-top:10px">In stock: {{ product.stock }} {{ product.unit }}</p>
+    {% else %}
+      <p style="color:var(--danger);font-weight:700">Out of stock</p>
+    {% endif %}
+  </div>
+</div>
+
+{% if related_products %}
+<section class="section" style="background:#fff;border-top:1px solid var(--border)">
+  <div class="container">
+    <div class="section-head"><h2>You may also like</h2></div>
+    <div class="product-grid">
+      {% for p in related_products %}
+        {% include 'shop/_product_card.html' with product=p %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

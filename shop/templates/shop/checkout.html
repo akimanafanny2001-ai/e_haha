@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Checkout — e_haha{% endblock %}
+{% block content %}
+<div class="container cart-layout">
+  <section>
+    <h1 style="font-size:30px;font-weight:800;margin-bottom:24px">Checkout</h1>
+    <form method="post" style="background:#fff;padding:24px;border-radius:var(--radius);border:1px solid var(--border)">
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="form-group">
+          <label>{{ field.label }}</label>
+          {{ field }}
+          {% if field.errors %}<ul class="errorlist">{% for e in field.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+        </div>
+      {% endfor %}
+      <button class="btn btn-primary" style="width:100%;justify-content:center">Place order</button>
+    </form>
+  </section>
+
+  <aside class="summary">
+    <h3>Your order</h3>
+    {% for it in items %}
+      <div class="summary-row"><span>{{ it.product.name }} × {{ it.qty }}</span><span>${{ it.subtotal }}</span></div>
+    {% endfor %}
+    <div class="summary-total"><span>Total</span><span>${{ total }}</span></div>
+  </aside>
+</div>
+{% endblock %}
