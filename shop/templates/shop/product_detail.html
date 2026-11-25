@@ -1,26 +1,26 @@
 {% extends 'base.html' %}
-{% block title %}{{ product.name }} — e_haha{% endblock %}
+{% block title %}{{ product.name }} - e_haha{% endblock %}
 
 {% block content %}
 <div class="container pd">
   <div class="pd-img">
-    {% if product.image %}<img src="{{ product.image.url }}" alt="{{ product.name }}">{% else %}<div class="ph" style="font-size:120px">🥗</div>{% endif %}
+    {% if product.image %}<img src="{{ product.image.url }}" alt="{{ product.name }}">{% else %}<div class="ph"></div>{% endif %}
   </div>
   <div class="pd-info">
     <div class="pd-cat">{{ product.category.name }}</div>
     <h1>{{ product.name }}</h1>
-    <div class="pd-price">${{ product.price }} <small style="font-size:16px;color:var(--muted);font-weight:500">/ {{ product.unit }}</small></div>
+    <div class="pd-price">RWF{{ product.price }} <small style="font-size:16px;color:var(--muted);font-weight:500">/ {{ product.unit }}</small></div>
     <p class="pd-desc">{{ product.description }}</p>
 
     {% if product.stock > 0 %}
       <form method="post" action="{% url 'shop:add_to_cart' product.id %}">
         {% csrf_token %}
         <div class="qty">
-          <button type="button" onclick="this.parentNode.querySelector('input').stepDown()">−</button>
+          <button type="button" onclick="this.parentNode.querySelector('input').stepDown()" aria-label="Decrease quantity">-</button>
           <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}">
           <button type="button" onclick="this.parentNode.querySelector('input').stepUp()">+</button>
         </div>
-        <button class="btn btn-primary">Add to cart 🛒</button>
+        <button class="btn btn-primary">Add to cart</button>
       </form>
       <p style="font-size:13px;color:var(--muted);margin-top:10px">In stock: {{ product.stock }} {{ product.unit }}</p>
     {% else %}

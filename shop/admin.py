@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Product, CustomerProfile, Order, OrderItem
+from .models import Category, HomepageImage, Product, CustomerProfile, Order, OrderItem
 
 
 @admin.register(Category)
@@ -15,6 +15,14 @@ class ProductAdmin(admin.ModelAdmin):
     list_editable = ['price', 'stock', 'is_available', 'is_featured']
     prepopulated_fields = {'slug': ('name',)}
     search_fields = ['name', 'description']
+
+
+@admin.register(HomepageImage)
+class HomepageImageAdmin(admin.ModelAdmin):
+    list_display = ['alt_text', 'is_active', 'sort_order']
+    list_editable = ['is_active', 'sort_order']
+    list_filter = ['is_active']
+    ordering = ['sort_order', 'id']
 
 
 @admin.register(CustomerProfile)

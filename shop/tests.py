@@ -1,10 +1,14 @@
 from decimal import Decimal
+from io import BytesIO
+from tempfile import TemporaryDirectory
 
+from PIL import Image
 from django.contrib.auth.models import User
-from django.test import TestCase
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import TestCase, override_settings
 from django.urls import reverse
 
-from .models import Category, CustomerProfile, Order, Product
+from .models import Category, CustomerProfile, HomepageImage, Order, Product
 
 
 class ShopTests(TestCase):
@@ -29,6 +33,112 @@ class ShopTests(TestCase):
         self.assertEqual(response.status_code, 200)
         response = self.client.get(self.product.get_absolute_url())
         self.assertContains(response, 'Fresh Apples')
+        self.assertContains(response, '<div class="ph"></div>', html=True)
+
+    def test_home_uses_fallback_when_no_uploaded_images_exist(self):
+        response = self.client.get(reverse('shop:home'))
+
+        self.assertContains(
+            response,
+            '<div class="hero-product-image hero-feature-image"></div>',
+            html=True,
+        )
+
+    def test_admin_can_upload_and_publish_homepage_image(self):
+        image_bytes = BytesIO()
+        Image.new('RGB', (1, 1), color='green').save(image_bytes, format='PNG')
+        image_bytes.seek(0)
+
+        with TemporaryDirectory() as media_root:
+            with override_settings(MEDIA_ROOT=media_root):
+                admin_user = User.objects.create_superuser(
+                    username='admin',
+                    email='admin@example.com',
+                    password='strong-pass-123',
+                )
+                self.client.force_login(admin_user)
+                response = self.client.post(reverse('admin:shop_homepageimage_add'), {
+                    'alt_text': 'Fresh fruit display',
+                    'is_active': 'on',
+                    'sort_order': '0',
+                    'image': SimpleUploadedFile(
+                        'homepage-fruit.png',
+                        image_bytes.getvalue(),
+                        content_type='image/png',
+                    ),
+                })
+                self.assertEqual(response.status_code, 302)
+
+                homepage_image = HomepageImage.objects.get(alt_text='Fresh fruit display')
+                self.assertTrue(homepage_image.image.storage.exists(homepage_image.image.name))
+                home_response = self.client.get(reverse('shop:home'))
+                self.assertContains(
+                    home_response,
+                    f'<img src="{homepage_image.image.url}" alt="Fresh fruit display">',
+                    html=True,
+                )
+
+    def test_admin_uploaded_product_image_is_displayed(self):
+        image_bytes = BytesIO()
+        Image.new('RGB', (1, 1), color='green').save(image_bytes, format='PNG')
+        image_bytes.seek(0)
+
+        with TemporaryDirectory() as media_root:
+            with override_settings(MEDIA_ROOT=media_root):
+                admin_user = User.objects.create_superuser(
+                    username='admin',
+                    email='admin@example.com',
+                    password='strong-pass-123',
+                )
+                self.client.force_login(admin_user)
+                response = self.client.post(reverse('admin:shop_product_add'), {
+                    'category': self.category.id,
+                    'name': 'Admin Apples',
+                    'slug': 'admin-apples',
+                    'description': 'Apples with an uploaded product image.',
+                    'price': '4.00',
+                    'unit': 'kg',
+                    'stock': '5',
+                    'is_available': 'on',
+                    'image': SimpleUploadedFile(
+                        'admin-apples.png',
+                        image_bytes.getvalue(),
+                        content_type='image/png',
+                    ),
+                })
+                self.assertEqual(response.status_code, 302)
+
+                product = Product.objects.get(slug='admin-apples')
+                self.assertTrue(product.image.storage.exists(product.image.name))
+                self.assertTrue(product.image.name.startswith('products/'))
+
+                home_response = self.client.get(reverse('shop:home'))
+                self.assertContains(
+                    home_response,
+                    f'<img src="{product.image.url}" alt="Admin Apples">',
+                    html=True,
+                )
+                list_response = self.client.get(reverse('shop:product_list'))
+                self.assertContains(
+                    list_response,
+                    f'<img src="{product.image.url}" alt="Admin Apples">',
+                    html=True,
+                )
+                session = self.client.session
+                session['cart'] = {str(product.id): 1}
+                session.save()
+                cart_response = self.client.get(reverse('shop:cart'))
+                self.assertContains(
+                    cart_response,
+                    f'<img src="{product.image.url}" alt="Admin Apples">',
+                    html=True,
+                )
+                detail_response = self.client.get(product.get_absolute_url())
+                self.assertContains(
+                    detail_response,
+                    f'<img src="{product.image.url}" alt="Admin Apples">',
+                    html=True,
+                )
 
     def test_cart_rejects_invalid_and_excess_quantity(self):
         add_url = reverse('shop:add_to_cart', args=[self.product.id])

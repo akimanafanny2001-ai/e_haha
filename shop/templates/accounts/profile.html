@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
-{% block title %}My profile — e_haha{% endblock %}
+{% block title %}My profile - e_haha{% endblock %}
 {% block content %}
 <div class="container">
   <div class="form-wrap">
     <h2>My profile</h2>
-    <p class="sub">{{ request.user.username }} • {{ request.user.email }}</p>
+    <p class="sub">{{ request.user.username }} | {{ request.user.email }}</p>
     <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
       {% for field in form %}

@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Shop — e_haha{% endblock %}
+{% block title %}Shop - e_haha{% endblock %}
 
 {% block content %}
 <div class="container shop-layout">
@@ -25,9 +25,9 @@
         {% if search %}<input type="hidden" name="q" value="{{ search }}">{% endif %}
         <select name="sort" onchange="this.form.submit()">
           <option value="-created_at" {% if sort == '-created_at' %}selected{% endif %}>Newest</option>
-          <option value="price" {% if sort == 'price' %}selected{% endif %}>Price: low → high</option>
-          <option value="-price" {% if sort == '-price' %}selected{% endif %}>Price: high → low</option>
-          <option value="name" {% if sort == 'name' %}selected{% endif %}>Name A → Z</option>
+          <option value="price" {% if sort == 'price' %}selected{% endif %}>Price: low to high</option>
+          <option value="-price" {% if sort == '-price' %}selected{% endif %}>Price: high to low</option>
+          <option value="name" {% if sort == 'name' %}selected{% endif %}>Name A to Z</option>
         </select>
       </form>
     </div>

@@ -47,6 +47,21 @@ class Product(models.Model):
         return reverse('shop:product_detail', args=[self.slug])
 
 
+class HomepageImage(models.Model):
+    image = models.ImageField(upload_to='homepage/')
+    alt_text = models.CharField(max_length=200, blank=True)
+    is_active = models.BooleanField(default=True)
+    sort_order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['sort_order', 'id']
+        verbose_name = 'Homepage image'
+        verbose_name_plural = 'Homepage images'
+
+    def __str__(self):
+        return self.alt_text or f'Homepage image {self.pk}'
+
+
 class CustomerProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     phone = models.CharField(max_length=20, blank=True)

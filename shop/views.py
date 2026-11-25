@@ -8,7 +8,7 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 from decimal import Decimal
 
-from .models import Category, Product, Order, OrderItem, CustomerProfile
+from .models import Category, HomepageImage, Product, Order, OrderItem, CustomerProfile
 from .forms import RegisterForm, LoginForm, CheckoutForm, ProfileForm
 
 
@@ -16,10 +16,17 @@ def home(request):
     categories = Category.objects.all()
     featured_products = Product.objects.filter(is_available=True, is_featured=True)[:8]
     latest_products = Product.objects.filter(is_available=True)[:8]
+    hero_products = Product.objects.filter(
+        is_available=True,
+        image__isnull=False,
+    ).exclude(image='')[:4]
+    homepage_images = HomepageImage.objects.filter(is_active=True)[:4]
     return render(request, 'shop/home.html', {
         'categories': categories,
         'featured_products': featured_products,
         'latest_products': latest_products,
+        'hero_products': hero_products,
+        'homepage_images': homepage_images,
     })
 
 

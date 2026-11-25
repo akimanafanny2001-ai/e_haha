@@ -4,9 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}e_haha — Fresh food, delivered{% endblock %}</title>
+    <title>{% block title %}e_haha - Fresh food, delivered{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
@@ -14,12 +15,12 @@
 <header class="navbar">
     <div class="container nav-inner">
         <a href="{% url 'shop:home' %}" class="brand">
-            <span class="brand-dot"></span> e_haha
+            e_haha
         </a>
 
         <form class="nav-search" action="{% url 'shop:product_list' %}" method="get">
             <input type="text" name="q" placeholder="Search fresh food..." value="{{ request.GET.q }}">
-            <button type="submit">🔍</button>
+            <button type="submit">Search</button>
         </form>
 
         <nav class="nav-links">
@@ -36,7 +37,7 @@
                 <a href="{% url 'shop:register' %}" class="btn-nav">Sign up</a>
             {% endif %}
             <a href="{% url 'shop:cart' %}" class="cart-link">
-                🛒 <span class="cart-count">{{ cart_item_count }}</span>
+                Cart <span class="cart-count">{{ cart_item_count }}</span>
             </a>
         </nav>
     </div>
@@ -75,7 +76,7 @@
             <p>+250 700 000 000</p>
         </div>
     </div>
-    <div class="footer-bottom">© {% now "Y" %} e_haha. All rights reserved.</div>
+    <div class="footer-bottom">{% now "Y" %} e_haha. All rights reserved.</div>
 </footer>
 
 </body>

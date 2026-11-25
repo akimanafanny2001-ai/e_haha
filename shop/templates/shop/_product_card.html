@@ -3,14 +3,14 @@
     {% if product.image %}
       <img src="{{ product.image.url }}" alt="{{ product.name }}">
     {% else %}
-      <div class="ph">🥗</div>
+      <div class="ph"></div>
     {% endif %}
     {% if product.is_featured %}<span class="badge">Featured</span>{% endif %}
   </a>
   <div class="product-body">
     <span class="product-cat">{{ product.category.name }}</span>
     <a href="{{ product.get_absolute_url }}" class="product-name">{{ product.name }}</a>
-    <div class="product-price"><b>${{ product.price }}</b><small>/ {{ product.unit }}</small></div>
+    <div class="product-price"><b>frw{{ product.price }}</b><small>/ {{ product.unit }}</small></div>
     {% if product.stock > 0 %}
     <form method="post" action="{% url 'shop:add_to_cart' product.id %}">
       {% csrf_token %}

@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Checkout — e_haha{% endblock %}
+{% block title %}Checkout - e_haha{% endblock %}
 {% block content %}
 <div class="container cart-layout">
   <section>
@@ -20,9 +20,9 @@
   <aside class="summary">
     <h3>Your order</h3>
     {% for it in items %}
-      <div class="summary-row"><span>{{ it.product.name }} × {{ it.qty }}</span><span>${{ it.subtotal }}</span></div>
+      <div class="summary-row"><span>{{ it.product.name }} x {{ it.qty }}</span><span>RWF{{ it.subtotal }}</span></div>
     {% endfor %}
-    <div class="summary-total"><span>Total</span><span>${{ total }}</span></div>
+    <div class="summary-total"><span>Total</span><span>RWF{{ total }}</span></div>
   </aside>
 </div>
 {% endblock %}

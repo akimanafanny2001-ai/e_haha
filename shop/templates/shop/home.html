@@ -1,21 +1,33 @@
 {% extends 'base.html' %}
-{% load static %}
-{% block title %}e_haha — Fresh food, delivered{% endblock %}
+{% block title %}e_haha - Fresh food, delivered{% endblock %}
 
 {% block content %}
 <section class="hero">
   <div class="container hero-inner">
     <div>
       <h1>Fresh food, <span>delivered</span> to your door.</h1>
-      <p>Hand-picked fruits, vegetables, and everyday essentials from trusted local farms — order today, enjoy tomorrow.</p>
+      <p>Hand-picked fruits, vegetables, and everyday essentials from trusted local farms - order today, enjoy tomorrow.</p>
       <div class="hero-buttons">
-        <a href="{% url 'shop:product_list' %}" class="btn btn-primary">Shop now →</a>
+        <a href="{% url 'shop:product_list' %}" class="btn btn-primary">Shop now</a>
         <a href="{% url 'shop:register' %}" class="btn btn-outline">Create account</a>
       </div>
     </div>
     <div class="hero-visual">
-      <div>🍎</div><div>🥦</div>
-      <div>🍞</div><div>🥛</div>
+      {% if homepage_images %}
+        {% for homepage_image in homepage_images %}
+          <div class="hero-product-image">
+            <img src="{{ homepage_image.image.url }}" alt="{{ homepage_image.alt_text|default:'Fresh food' }}">
+          </div>
+        {% endfor %}
+      {% elif hero_products %}
+        {% for product in hero_products %}
+          <a href="{{ product.get_absolute_url }}" class="hero-product-image">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+          </a>
+        {% endfor %}
+      {% else %}
+        <div class="hero-product-image hero-feature-image"></div>
+      {% endif %}
     </div>
   </div>
 </section>
@@ -24,12 +36,14 @@
   <div class="container">
     <div class="section-head">
       <div><h2>Shop by category</h2><p>Everything you need in one place.</p></div>
-      <a href="{% url 'shop:product_list' %}" class="link-all">Browse all →</a>
+      <a href="{% url 'shop:product_list' %}" class="link-all">Browse all</a>
     </div>
     <div class="category-grid">
       {% for c in categories %}
         <a href="{{ c.get_absolute_url }}" class="category-card">
-          <div class="category-emoji">🥗</div>
+          {% if c.image %}
+            <img src="{{ c.image.url }}" alt="{{ c.name }}">
+          {% endif %}
           <h3>{{ c.name }}</h3>
         </a>
       {% empty %}
@@ -44,7 +58,7 @@
   <div class="container">
     <div class="section-head">
       <div><h2>Featured picks</h2><p>Loved by our customers.</p></div>
-      <a href="{% url 'shop:product_list' %}" class="link-all">See all →</a>
+      <a href="{% url 'shop:product_list' %}" class="link-all">See all</a>
     </div>
     <div class="product-grid">
       {% for p in featured_products %}
